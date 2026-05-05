@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.comundefsuperahorro"
+    namespace = "com.undef.superahorro.Loza.Urieta"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.comundefsuperahorro"
+        applicationId = "com.undef.superahorro.Loza.Urieta"
         minSdk = 30
         targetSdk = 36
         versionCode = 1

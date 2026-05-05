@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "com.undef.superahorro"
+rootProject.name = "SuperAhorro"
 include(":app")
  
