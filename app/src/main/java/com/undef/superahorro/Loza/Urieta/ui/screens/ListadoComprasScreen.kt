@@ -30,7 +30,7 @@ import com.undef.superahorro.ui.components.SuperAhorroBottomBar
 @Composable
 fun ListadoComprasScreen(navController: NavHostController) {
 
-    val compras = MockData.compras
+    val compras = repository.getCompras()
 
     Scaffold(
         topBar = {

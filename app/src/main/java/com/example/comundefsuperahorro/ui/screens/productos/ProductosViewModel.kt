@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class ProductosViewModel : ViewModel() {
 
+    private val repository = SuperAhorroRepository()//agregamos instancias del repositorio
     private val _uiState = MutableStateFlow(ProductosUiState())
     val uiState: StateFlow<ProductosUiState> = _uiState.asStateFlow()
 

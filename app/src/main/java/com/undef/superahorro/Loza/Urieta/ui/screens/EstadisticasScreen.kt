@@ -43,8 +43,8 @@ import com.undef.superahorro.ui.components.SuperAhorroBottomBar
 @Composable
 fun EstadisticasScreen(navController: NavHostController) {
 
-    val gastoMensual = MockData.gastoMensual
-    val gastoSuper = MockData.gastoPorSupermercado
+    val gastoMensual = repository.getGastoMensual()
+    val gastoSuper = repository.getGastoPorSupermercado()
     val totalGastado = gastoSuper.sumOf { it.second }
 
     Scaffold(

@@ -44,8 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.comundefsuperahorro.SuperAhorroRepository // Importamos tu nuevo repositorio
 import com.undef.superahorro.R
-import com.undef.superahorro.data.MockData
 import com.undef.superahorro.navigation.Screen
 import com.undef.superahorro.ui.components.SuperAhorroBottomBar
 
@@ -53,9 +53,11 @@ import com.undef.superahorro.ui.components.SuperAhorroBottomBar
 @Composable
 fun MiPerfilScreen(
     navController: NavHostController,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    // 1. Declaramos el repositorio aquí como parámetro por defecto.
+    repository: SuperAhorroRepository = SuperAhorroRepository()
 ) {
-    val usuario = MockData.usuarioActual
+    val usuario = repository.getUsuarioActual()
 
     Scaffold(
         topBar = {

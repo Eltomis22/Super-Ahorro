@@ -35,14 +35,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.undef.superahorro.R
-import com.undef.superahorro.data.MockData
 import com.undef.superahorro.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistorialComprasScreen(navController: NavHostController) {
+fun HistorialComprasScreen(
+    navController: NavHostController,
+    viewModel: HistorialComprasViewModel = viewModel() // Inyectamos el ViewModel de Compose
+) {
 
     // Filtros traídos desde strings.xml para que respeten el idioma activo
     val filtros = listOf(
@@ -54,8 +57,8 @@ fun HistorialComprasScreen(navController: NavHostController) {
     )
     var filtroActivo by remember { mutableStateOf(filtros.first()) }
 
-    val comprasOrdenadas = MockData.compras.sortedByDescending { it.fecha }
-    val agrupadas = comprasOrdenadas.groupBy { it.fecha.substring(0, 7) }
+    // AHORA: El ViewModel orquesta y nos da los datos ya procesados desde el Repository
+    val agrupadas = viewModel.getComprasAgrupadas()
 
     val mesesArray = stringArrayResource(R.array.month_names)
 
@@ -138,11 +141,6 @@ fun HistorialComprasScreen(navController: NavHostController) {
         }
     }
 }
-
-/**
- * Formatea "2026-04" a "Abril 2026" / "April 2026" según el array de meses
- * provisto desde strings.xml (respeta el idioma activo).
- */
 private fun formatMes(yyyyMm: String, meses: Array<String>): String {
     val partes = yyyyMm.split("-")
     val mesIndex = partes.getOrNull(1)?.toIntOrNull()?.minus(1) ?: return yyyyMm

@@ -1,7 +1,7 @@
-package com.undef.superahorro.ui.components
+package com.undef.superahorro.Loza.Urieta.ui.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Analytics // <- Cambiado por un icono real de estadísticas
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -30,7 +30,7 @@ private data class BottomItem(
 private val bottomItems = listOf(
     BottomItem(Screen.Home.route, Icons.Filled.Home, R.string.bottom_home),
     BottomItem(Screen.ListadoCompras.route, Icons.Filled.ShoppingCart, R.string.bottom_compras),
-    BottomItem(Screen.Estadisticas.route, Icons.Filled.BarChart, R.string.bottom_estadisticas),
+    BottomItem(Screen.Estadisticas.route, Icons.Filled.Analytics, R.string.bottom_estadisticas), // <- Aquí también se cambió
     BottomItem(Screen.MiPerfil.route, Icons.Filled.Person, R.string.bottom_perfil)
 )
 
