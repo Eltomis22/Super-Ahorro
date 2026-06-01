@@ -1,17 +1,38 @@
 package com.undef.superahorro.ui.screens
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.comundefsuperahorro.SuperAhorroRepository
 import com.undef.superahorro.data.model.Compra
+import kotlinx.coroutines.launch
 
 class HistorialComprasViewModel : ViewModel() {
-
-    // El ViewModel tiene la instancia del repositorio
     private val repository = SuperAhorroRepository()
 
-    // El ViewModel realiza la orquestación/procesamiento de los datos
-    fun getComprasAgrupadas(): Map<String, List<Compra>> {
-        val comprasOrdenadas = repository.getCompras().sortedByDescending { it.fecha }
-        return comprasOrdenadas.groupBy { it.fecha.substring(0, 7) }
+    // Estado interno mutable para guardar las compras agrupadas
+    private val _comprasAgrupadas = mutableStateOf<Map<String, List<Compra>>>(emptyMap())
+    // Estado público expuesto a la Screen (Inmutable)
+    val comprasAgrupadas: State<Map<String, List<Compra>>> = _comprasAgrupadas
+
+    init {
+        cargarCompras()
+    }
+
+    private fun cargarCompras() {
+        // REQUERIMIENTO DEL PROFESOR: Usamos viewModelScope.launch para manejar la corrutina
+        viewModelScope.launch {
+            try {
+                // Se ejecuta en segundo plano gracias al repositorio suspendido
+                val listaCompras = repository.getCompras()
+
+                // Procesamos y agrupamos los datos
+                val comprasOrdenadas = listaCompras.sortedByDescending { it.fecha }
+                _comprasAgrupadas.value = comprasOrdenadas.groupBy { it.fecha.substring(0, 7) }
+            } catch (e: Exception) {
+                // Aquí manejarías errores de red o base de datos en la entrega 2
+            }
+        }
     }
 }

@@ -58,7 +58,7 @@ fun HistorialComprasScreen(
     var filtroActivo by remember { mutableStateOf(filtros.first()) }
 
     // AHORA: El ViewModel orquesta y nos da los datos ya procesados desde el Repository
-    val agrupadas = viewModel.getComprasAgrupadas()
+    val agrupadas by viewModel.comprasAgrupadas
 
     val mesesArray = stringArrayResource(R.array.month_names)
 
