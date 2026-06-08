@@ -1,13 +1,14 @@
-package com.example.comundefsuperahorro.ui.screens.productos
+package com.undef.superahorro.Loza.Urieta.ui.screens.productos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.comundefsuperahorro.Producto
+import com.undef.superahorro.Loza.Urieta.Producto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.undef.superahorro.Loza.Urieta.data.repository.SuperAhorroRepository
 
 class ProductosViewModel : ViewModel() {
 

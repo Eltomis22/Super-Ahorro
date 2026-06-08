@@ -1,47 +1,93 @@
-package navigation
+package com.undef.superahorro.Loza.Urieta.navigation
 
-class NavGraph {
+import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 
-    package com.undef.superahorro.navigation
+// Importamos el repositorio único
+import com.undef.superahorro.Loza.Urieta.data.repository.SuperAhorroRepository
 
-    import androidx.compose.runtime.Composable
-    import androidx.navigation.NavHostController
-    import androidx.navigation.compose.*
+// IMPORTANTE: Estos imports apuntan a las pantallas que están guardadas en la carpeta de abajo
+import com.undef.superahorro.Loza.Urieta.ui.screens.home.HomeViewModel
+import com.undef.superahorro.Loza.Urieta.ui.screens.estadisticas.EstadisticasViewModel
+import com.undef.superahorro.Loza.Urieta.ui.screens.listadocompras.ListadoComprasViewModel
+import com.undef.superahorro.Loza.Urieta.ui.screens.detallecompra.DetalleCompraViewModel
+import com.undef.superahorro.Loza.Urieta.ui.screens.home.HomeScreen
+import com.undef.superahorro.Loza.Urieta.ui.screens.estadisticas.EstadisticasScreen
+import com.undef.superahorro.Loza.Urieta.ui.screens.listadocompras.ListadoComprasScreen
+import com.undef.superahorro.Loza.Urieta.ui.screens.detallecompra.DetalleCompraScreen
 
-    import com.undef.superahorro.ui.screens.*
+@Composable
+fun NavGraph(
+    navController: NavHostController,
+    repository: SuperAhorroRepository
+) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Home.route
+    ) {
 
-    @Composable
-    fun NavGraph(navController: NavHostController) {
+        // 🏠 1. HOME
+        composable(Screen.Home.route) {
+            val homeViewModel: HomeViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return HomeViewModel(repository) as T
+                    }
+                }
+            )
+            HomeScreen(navController = navController, viewModel = homeViewModel)
+        }
 
-        NavHost(
-            navController = navController,
-            startDestination = "splash"
-        ) {
+        // 📊 2. ESTADÍSTICAS
+        composable(Screen.Estadisticas.route) {
+            val estadisticasViewModel: EstadisticasViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return EstadisticasViewModel(repository) as T
+                    }
+                }
+            )
+            EstadisticasScreen(navController = navController, viewModel = estadisticasViewModel)
+        }
 
-            composable("splash") {
-                SplashScreen(navController)
-            }
+        // 📜 3. HISTORIAL
+        composable(Screen.HistorialCompras.route) {
+            val listadoViewModel: ListadoComprasViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return ListadoComprasViewModel(repository) as T
+                    }
+                }
+            )
+            ListadoComprasScreen(navController = navController, viewModel = listadoViewModel)
+        }
 
-            composable("login") {
-                LoginScreen(navController)
-            }
+        // 🔍 4. DETALLE DE COMPRA
+        composable(
+            route = Screen.DetalleCompra.route,
+            arguments = listOf(navArgument("compraId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val compraId = backStackEntry.arguments?.getInt("compraId") ?: 0
 
-            composable("home") {
-                HomeScreen(navController)
-            }
-
-            composable("nueva_compra") {
-                NuevaCompraScreen(navController)
-            }
-
-            composable("lista_compras") {
-                ListaComprasScreen(navController)
-            }
-
-            composable("detalle_compra") {
-                DetalleCompraScreen(navController)
-            }
+            val detalleViewModel: DetalleCompraViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return DetalleCompraViewModel(repository) as T
+                    }
+                }
+            )
+            DetalleCompraScreen(
+                compraId = compraId,
+                navController = navController,
+                viewModel = detalleViewModel
+            )
         }
     }
-
-}
+}}}

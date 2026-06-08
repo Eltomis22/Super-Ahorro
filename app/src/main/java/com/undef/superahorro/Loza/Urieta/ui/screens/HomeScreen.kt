@@ -1,4 +1,4 @@
-package com.undef.superahorro.ui.screens
+package com.undef.superahorro.Loza.Urieta.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Store
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,30 +44,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.undef.superahorro.R
-import com.undef.superahorro.data.MockData
 import com.undef.superahorro.data.model.Compra
 import com.undef.superahorro.navigation.Screen
 import com.undef.superahorro.ui.components.SuperAhorroBottomBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController) {
-
-    val usuario = MockData.usuarioActual
-    val ultimasCompras = MockData.compras.take(3)
-    val totalMes = MockData.compras
-        .filter { it.fecha.startsWith("2026-04") }
-        .sumOf { it.total }
+fun HomeScreen(
+    navController: NavHostController,
+    viewModel: HomeViewModel = viewModel() // Inyectamos el HomeViewModel
+) {
+    // REQUISITO CLAVE: Consumo del estado inmutable respetando el ciclo de vida
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Column {
+                        // Extraemos el primer nombre de forma segura basándonos en el estado
+                        val primerNombre = state.usuarioNombre.split(" ").firstOrNull() ?: ""
                         Text(
-                            text = stringResource(R.string.home_hello, usuario.nombre.split(" ")[0]),
+                            text = stringResource(R.string.home_hello, primerNombre),
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
@@ -100,50 +104,76 @@ fun HomeScreen(navController: NavHostController) {
             )
         }
     ) { padding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(padding)
         ) {
-            item {
-                MonthlyCard(totalMes = totalMes)
-            }
-
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    QuickActionCard(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Filled.History,
-                        label = stringResource(R.string.home_history),
-                        onClick = { navController.navigate(Screen.HistorialCompras.route) }
-                    )
-                    QuickActionCard(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Filled.Store,
-                        label = stringResource(R.string.home_supermarkets),
-                        onClick = { navController.navigate(Screen.Estadisticas.route) }
-                    )
-                }
-            }
-
-            item {
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else if (state.error != null) {
                 Text(
-                    text = stringResource(R.string.home_recent_title),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(top = 8.dp)
+                    text = state.error ?: "Error al cargar la pantalla de inicio",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.Center)
                 )
-            }
-
-            items(ultimasCompras, key = { it.id }) { compra ->
-                CompraResumenCard(
-                    compra = compra,
-                    onClick = {
-                        navController.navigate(Screen.DetalleCompra.createRoute(compra.id))
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    item {
+                        // El cálculo pesado ya se hizo en el ViewModel
+                        MonthlyCard(totalMes = state.totalMes)
                     }
-                )
+
+                    item {
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            QuickActionCard(
+                                modifier = Modifier.weight(1f),
+                                icon = Icons.Filled.History,
+                                label = stringResource(R.string.home_history),
+                                onClick = { navController.navigate(Screen.HistorialCompras.route) }
+                            )
+                            QuickActionCard(
+                                modifier = Modifier.weight(1f),
+                                icon = Icons.Filled.Store,
+                                label = stringResource(R.string.home_supermarkets),
+                                onClick = { navController.navigate(Screen.Estadisticas.route) }
+                            )
+                        }
+                    }
+
+                    item {
+                        Text(
+                            text = stringResource(R.string.home_recent_title),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+
+                    if (state.ultimasCompras.isEmpty()) {
+                        item {
+                            Text(
+                                text = "No registraste compras recientes.",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 14.sp
+                            )
+                        }
+                    } else {
+                        // Tomamos la lista ya acotada a 3 elementos provista por el State
+                        items(state.ultimasCompras, key = { it.id }) { compra ->
+                            CompraResumenCard(
+                                compra = compra,
+                                onClick = {
+                                    navController.navigate(Screen.DetalleCompra.createRoute(compra.id))
+                                }
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -153,9 +183,7 @@ fun HomeScreen(navController: NavHostController) {
 private fun MonthlyCard(totalMes: Double) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        ),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(20.dp)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -192,9 +220,7 @@ private fun QuickActionCard(
         modifier = modifier
             .height(100.dp)
             .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         shape = RoundedCornerShape(20.dp)
     ) {
         Column(

@@ -1,4 +1,4 @@
-package com.undef.superahorro
+package com.undef.superahorro.Loza.Urieta
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -12,7 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import com.undef.superahorro.navigation.SuperAhorroNavGraph
+import androidx.navigation.compose.rememberNavController
+import com.undef.superahorro.Loza.Urieta.data.repository.SuperAhorroRepository
+import com.undef.superahorro.Loza.Urieta.navigation.NavGraph
 import com.undef.superahorro.ui.AppSettings
 import com.undef.superahorro.ui.theme.SuperAhorroTheme
 import java.util.Locale
@@ -21,13 +23,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setContent {
 
-            // Modo oscuro reactivo al toggle de Settings.
+        // Inicializamos el repositorio único de datos
+        val repository = SuperAhorroRepository()
+
+        setContent {
+            // Modo oscuro reactivo al toggle de Settings
             SuperAhorroTheme(darkTheme = AppSettings.darkMode) {
 
-                // Idioma reactivo al toggle de Settings.
-                // Por defecto español; cambia a inglés si el usuario lo activa.
+                // Idioma reactivo al toggle de Settings
                 val targetLocale = if (AppSettings.useEnglish) Locale("en") else Locale("es")
                 val baseConfig = LocalConfiguration.current
                 val baseContext = LocalContext.current
@@ -46,7 +50,13 @@ class MainActivity : ComponentActivity() {
                     LocalContext provides newContext
                 ) {
                     Surface(modifier = Modifier.fillMaxSize()) {
-                        SuperAhorroNavGraph()
+                        val navController = rememberNavController()
+
+                        // Levantamos la navegación pasándole el repositorio
+                        NavGraph(
+                            navController = navController,
+                            repository = repository
+                        )
                     }
                 }
             }

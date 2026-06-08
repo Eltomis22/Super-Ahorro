@@ -1,4 +1,4 @@
-package com.example.comundefsuperahorro.ui.theme
+package com.undef.superahorro.Loza.Urieta.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

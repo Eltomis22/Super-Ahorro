@@ -1,4 +1,4 @@
-package com.example.comundefsuperahorro.ui.screens.productos
+package com.undef.superahorro.Loza.Urieta.ui.screens.productos
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

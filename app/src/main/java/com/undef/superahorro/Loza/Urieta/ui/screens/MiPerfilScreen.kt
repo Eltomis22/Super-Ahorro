@@ -44,7 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.comundefsuperahorro.SuperAhorroRepository // Importamos tu nuevo repositorio
+import com.undef.superahorro.Loza.Urieta.SuperAhorroRepository // Importamos tu nuevo repositorio
 import com.undef.superahorro.R
 import com.undef.superahorro.navigation.Screen
 import com.undef.superahorro.ui.components.SuperAhorroBottomBar

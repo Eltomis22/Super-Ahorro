@@ -1,10 +1,10 @@
 package com.undef.superahorro.ui.screens
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.comundefsuperahorro.SuperAhorroRepository
+import com.undef.superahorro.Loza.Urieta.SuperAhorroRepository
 import com.undef.superahorro.data.model.Compra
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.example.comundefsuperahorro
+package com.undef.superahorro.Loza.Urieta
 
 class Producto {
     package com.undef.superahorro.model

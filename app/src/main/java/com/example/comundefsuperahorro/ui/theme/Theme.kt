@@ -1,4 +1,4 @@
-package com.example.comundefsuperahorro.ui.theme
+package com.undef.superahorro.Loza.Urieta.ui.theme
 
 import android.app.Activity
 import android.os.Build
